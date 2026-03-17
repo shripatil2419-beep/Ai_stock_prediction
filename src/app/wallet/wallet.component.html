@@ -1,0 +1,257 @@
+<div class="wallet-page py-4 bg-light min-vh-100">
+  <div class="container animate-fade-in" *ngIf="walletState">
+    
+    <!-- Premium Digital Wallet Card -->
+    <div class="row mb-5">
+      <div class="col-lg-6">
+        <div class="digital-card shadow-lg p-4 text-white position-relative overflow-hidden mb-4 mb-lg-0">
+          <div class="glass-overlay"></div>
+          <div class="card-content">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+              <div class="card-brand">
+                <i class="bi bi-wallet2 fs-2"></i>
+                <span class="ms-2 fw-bold tracking-widest text-uppercase">Investor Card</span>
+              </div>
+              <div class="card-chip"></div>
+            </div>
+            
+            <div class="balance-section mb-4">
+              <div class="small text-white-50 text-uppercase tracking-wider mb-1">Total Balance</div>
+              <h1 class="display-5 fw-bold mb-0">₹{{ walletState.balance | number:'1.2-2' }}</h1>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-end">
+              <div>
+                <div class="small text-white-50 text-uppercase mb-0">Card Holder</div>
+                <div class="fw-bold fs-5">{{ userProfile?.name || 'Pro Investor' }}</div>
+              </div>
+              <div class="text-end">
+                <div class="small text-white-50 text-uppercase mb-0">Status</div>
+                <div class="badge bg-white text-primary rounded-pill fw-bold px-3">GOLD MEMBER</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Center & Visual Breakdown -->
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 p-4">
+          <h5 class="fw-bold mb-4">Action Center</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-6">
+              <button class="btn btn-primary w-100 py-3 rounded-4 shadow-sm border-0 d-flex flex-column align-items-center justify-content-center hover-scale" (click)="openAddModal()">
+                <i class="bi bi-plus-circle-fill fs-3 mb-2"></i>
+                <span class="fw-bold">Add Funds</span>
+              </button>
+            </div>
+            <div class="col-6">
+              <button class="btn btn-white border w-100 py-3 rounded-4 shadow-sm d-flex flex-column align-items-center justify-content-center hover-scale" (click)="openWithdrawModal()" [disabled]="walletState.balance <= 0">
+                <i class="bi bi-arrow-up-right-circle fs-3 mb-2 text-primary"></i>
+                <span class="fw-bold text-dark">Withdraw</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="balance-breakdown">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="small text-muted fw-bold">INVESTMENT CAPACITY</span>
+              <span class="small fw-bold text-primary">100% AVAILABLE</span>
+            </div>
+            <div class="progress rounded-pill bg-light" style="height: 12px;">
+              <div class="progress-bar bg-primary-gradient progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+            </div>
+            <p class="small text-muted mt-2 mb-0">
+              <i class="bi bi-info-circle me-1"></i> You currently have full liquidity in your wallet.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction History with Filters -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+      <div class="card-header bg-white border-bottom-0 pt-4 px-4 d-md-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-3 mb-md-0">Financial History</h5>
+        
+        <!-- Interactive Tabs -->
+        <div class="nav nav-pills bg-light p-1 rounded-pill shadow-sm">
+          <button class="nav-link rounded-pill py-2 px-4 shadow-none" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">All</button>
+          <button class="nav-link rounded-pill py-2 px-4 shadow-none" [class.active]="activeFilter === 'deposit'" (click)="setFilter('deposit')">Deposits</button>
+          <button class="nav-link rounded-pill py-2 px-4 shadow-none" [class.active]="activeFilter === 'withdrawal'" (click)="setFilter('withdrawal')">Withdrawals</button>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle">
+            <thead class="bg-light">
+              <tr>
+                <th class="ps-4 border-0 text-muted small text-uppercase py-3">Transaction</th>
+                <th class="border-0 text-muted small text-uppercase py-3">Date & Method</th>
+                <th class="border-0 text-muted small text-uppercase py-3">Status</th>
+                <th class="border-0 text-end pe-4 text-muted small text-uppercase py-3">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="filteredTransactions.length === 0">
+                <td colspan="4" class="text-center py-5">
+                  <div class="empty-state">
+                    <i class="bi bi-receipt-cutoff display-2 text-muted opacity-25 mb-3 d-block"></i>
+                    <h6 class="text-muted">No transactions found in this category.</h6>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngFor="let txn of filteredTransactions" class="animate-slide-up">
+                <td class="ps-4">
+                  <div class="d-flex align-items-center py-2">
+                    <div class="rounded-circle p-2 me-3 d-flex align-items-center justify-content-center shadow-sm"
+                         [ngClass]="txn.type === 'deposit' ? 'bg-success-subtle text-success' : 'bg-primary-subtle text-primary'">
+                      <i class="bi" [ngClass]="txn.type === 'deposit' ? 'bi-plus-lg' : 'bi-dash-lg'"></i>
+                    </div>
+                    <div>
+                      <div class="fw-bold text-dark">{{ txn.type === 'deposit' ? 'Funds Added' : 'Withdrawal' }}</div>
+                      <div class="small text-muted d-md-none">{{ txn.method }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="small fw-medium text-dark">{{ txn.date | date:'mediumDate' }}</div>
+                  <div class="small text-muted">{{ txn.method }}</div>
+                </td>
+                <td>
+                  <span class="badge rounded-pill px-3 py-2" [ngClass]="txn.status === 'completed' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
+                    {{ txn.status | uppercase }}
+                  </span>
+                </td>
+                <td class="text-end pe-4">
+                  <span class="fw-bold fs-5" [ngClass]="txn.type === 'deposit' ? 'text-success' : 'text-dark'">
+                    {{ txn.type === 'deposit' ? '+' : '-' }}₹{{ txn.amount | number:'1.2-2' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Money Modal -->
+<div class="modal fade show custom-modal" tabindex="-1" *ngIf="showAddModal" style="display: block;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold">Add Money to Wallet</h5>
+        <button type="button" class="btn-close" (click)="closeModals()" [disabled]="isProcessing"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-4 text-center">
+          <label class="form-label text-muted fw-bold text-uppercase small">Enter Amount</label>
+          <div class="input-group input-group-lg mb-3">
+            <span class="input-group-text bg-white fw-bold">₹</span>
+            <input type="number" class="form-control text-center fw-bold fs-3" [(ngModel)]="amount" min="100">
+          </div>
+          <div class="d-flex justify-content-center gap-2">
+            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" (click)="setAmount(500)">+500</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" (click)="setAmount(1000)">+1000</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" (click)="setAmount(5000)">+5000</button>
+          </div>
+        </div>
+
+        <h6 class="fw-bold text-muted small text-uppercase mb-3">Payment Method</h6>
+        
+        <div class="btn-group w-100 mb-4" role="group">
+          <input type="radio" class="btn-check" name="paymethod" id="method-phonepe" autocomplete="off" 
+                 [(ngModel)]="paymentMethod" value="phonepe">
+          <label class="btn btn-outline-primary p-3" for="method-phonepe">
+            <i class="bi bi-phone d-block fs-4 mb-1"></i> PhonePe
+          </label>
+
+          <input type="radio" class="btn-check" name="paymethod" id="method-debit" autocomplete="off"
+                 [(ngModel)]="paymentMethod" value="debit">
+          <label class="btn btn-outline-primary p-3" for="method-debit">
+            <i class="bi bi-credit-card d-block fs-4 mb-1"></i> Debit Card
+          </label>
+        </div>
+
+        <!-- Fake details depending on selection -->
+        <div class="bg-light p-3 rounded mb-4 text-center border">
+          <div *ngIf="paymentMethod === 'phonepe'">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe" style="height: 30px;" class="mb-2">
+            <p class="small text-muted mb-0">You will be redirected to the PhonePe app to approve the payment securely.</p>
+          </div>
+          <div *ngIf="paymentMethod === 'debit'" class="text-start">
+            <label class="small text-muted fw-bold mb-1">Card Number</label>
+            <input type="text" class="form-control mb-2" value="**** **** **** 5678" readonly>
+            <div class="row">
+              <div class="col-6">
+                <label class="small text-muted fw-bold mb-1">Expiry</label>
+                <input type="text" class="form-control" value="12/28" readonly>
+              </div>
+              <div class="col-6">
+                <label class="small text-muted fw-bold mb-1">CVV</label>
+                <input type="password" class="form-control" value="***" readonly>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-100 py-3 fw-bold rounded-3" (click)="processAddFunds()" [disabled]="isProcessing || amount < 100">
+          <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isProcessing ? 'Processing Payment...' : 'Proceed to Pay ₹' + amount }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Withdraw Money Modal -->
+<div class="modal fade show custom-modal" tabindex="-1" *ngIf="showWithdrawModal" style="display: block;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold">Withdraw to Bank</h5>
+        <button type="button" class="btn-close" (click)="closeModals()" [disabled]="isProcessing"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="alert alert-info border-0 bg-info-subtle small mb-4">
+          <i class="bi bi-info-circle-fill me-1"></i> Available for withdrawal: <strong>₹{{ walletState?.balance }}</strong>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label text-muted fw-bold text-uppercase small">Withdraw Amount</label>
+          <div class="input-group input-group-lg">
+            <span class="input-group-text bg-white fw-bold">₹</span>
+            <input type="number" class="form-control fw-bold" [(ngModel)]="amount" min="100" [max]="walletState?.balance || 0">
+          </div>
+          <div class="text-danger small mt-1" *ngIf="walletState && amount > walletState.balance">
+            Amount exceeds available balance.
+          </div>
+        </div>
+
+        <h6 class="fw-bold text-muted small text-uppercase mb-2">Transfer To</h6>
+        <div class="border rounded p-3 mb-4 d-flex align-items-center bg-light">
+          <div class="bg-white border rounded p-2 me-3 shadow-sm">
+            <i class="bi bi-bank text-primary fs-4"></i>
+          </div>
+          <div>
+            <div class="fw-bold">{{ withdrawAccount }}</div>
+            <div class="small text-muted">Savings Account</div>
+          </div>
+          <i class="bi bi-check-circle-fill text-success ms-auto fs-5"></i>
+        </div>
+
+        <button class="btn btn-primary w-100 py-3 fw-bold rounded-3" (click)="processWithdrawFunds()" 
+                [disabled]="isProcessing || amount < 100 || (walletState && amount > walletState.balance)">
+          <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isProcessing ? 'Initiating Transfer...' : 'Withdraw ₹' + amount }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showAddModal || showWithdrawModal"></div>

@@ -1,0 +1,69 @@
+<div class="login-wrapper d-flex align-items-center justify-content-center min-vh-100 bg-light">
+  <div class="card shadow-lg border-0 p-4" style="max-width: 450px; width: 100%; border-radius: 15px;">
+    <div class="text-center mb-4">
+        <div class="bg-white d-inline-block rounded-circle p-1 mb-2 shadow-sm" style="width: 64px; height: 64px; overflow: hidden;">
+          <img src="assets/logo.png" alt="Antigravity Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+      <h2 class="fw-bold text-dark">Create Account</h2>
+      <p class="text-muted small">Join Market Intelligence for AI-powered insights</p>
+    </div>
+
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+      <div class="mb-3">
+        <label for="email" class="form-label fw-semibold">Email Address</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+          <input type="email" id="email" name="email" class="form-control border-start-0 ps-0" required [(ngModel)]="email" placeholder="name@example.com">
+        </div>
+      </div>
+      
+      <div class="mb-3">
+        <label for="password" class="form-label fw-semibold">Password</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock text-muted"></i></span>
+          <input type="password" id="password" name="password" class="form-control border-start-0 ps-0" required [(ngModel)]="password" placeholder="Min. 8 characters">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="phoneNumber" class="form-label fw-semibold">Phone Number</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-phone text-muted"></i></span>
+          <input type="text" id="phoneNumber" name="phoneNumber" class="form-control border-start-0 ps-0" 
+            required [(ngModel)]="phoneNumber" placeholder="10-digit mobile number"
+            minlength="10" maxlength="10" pattern="[0-9]*">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="accountNumber" class="form-label fw-semibold">Account Number</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-bank text-muted"></i></span>
+          <input type="text" id="accountNumber" name="accountNumber" class="form-control border-start-0 ps-0" 
+            required [(ngModel)]="accountNumber" placeholder="Your bank account number"
+            minlength="12" maxlength="12" pattern="[0-9]*">
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
+          <input type="password" id="confirmPassword" name="confirmPassword" class="form-control border-start-0 ps-0" required [(ngModel)]="confirmPassword" placeholder="Repeat password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm" [disabled]="!registerForm.form.valid">
+        Get Started
+      </button>
+
+      <div *ngIf="errorMessage" class="alert alert-danger mt-3 small border-0 fade-in">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="alert alert-success mt-3 small border-0 fade-in">{{ successMessage }}</div>
+
+      <div class="text-center mt-4">
+        <span class="text-muted small">Already have an account?</span>
+        <a routerLink="/login" class="text-primary small fw-bold text-decoration-none ms-1">Login Now</a>
+      </div>
+    </form>
+  </div>
+</div>

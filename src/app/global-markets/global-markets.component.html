@@ -1,0 +1,118 @@
+<div class="global-markets-container p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="badge bg-dark border border-secondary d-flex align-items-center rounded-pill px-3 py-2" *ngIf="globalData">
+        <span class="live-pulse"></span>
+        <span class="small fw-bold tracking-wider">LIVE GLOBAL FEED</span>
+      </div>
+      <div class="text-muted small" *ngIf="globalData">
+        <i class="bi bi-clock-history me-1"></i> Last Updated: {{ globalData.lastUpdated | date:'medium' }}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary btn-sm rounded-pill px-3" (click)="fetchGlobalData()" [disabled]="loading">
+        <i class="bi bi-arrow-clockwise" [class.spin]="loading"></i>
+      </button>
+      <button class="btn btn-success btn-sm rounded-pill px-4 fw-bold shadow-sm" (click)="sendMarketSms()" [disabled]="loading || isSendingSms">
+        <i class="bi me-1" [ngClass]="isSendingSms ? 'bi-hourglass-split' : 'bi-phone-fill'"></i>
+        {{ isSendingSms ? 'Sending SMS...' : 'Send to Mobile' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Analyzing International Markets...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && globalData">
+    <!-- World Indices -->
+    <section class="mb-5">
+      <h5 class="mb-3 fw-bold text-uppercase border-start border-4 border-primary ps-3">World Indices</h5>
+      <div class="row g-3">
+        <div class="col-md-4 col-lg-3" *ngFor="let index of globalData.indices">
+          <div class="card index-card shadow-sm border-0 h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="fw-bold mb-0">{{ index.name }}</h6>
+                <span class="badge" [ngClass]="{
+                  'bg-success-subtle text-success': index.status === 'Bullish',
+                  'bg-danger-subtle text-danger': index.status === 'Bearish',
+                  'bg-secondary-subtle text-secondary': index.status === 'Neutral'
+                }">{{ index.status }}</span>
+              </div>
+              <div class="d-flex align-items-baseline">
+                <h4 class="mb-0 fw-bold">{{ index.price }}</h4>
+                <span class="ms-2 live-pulse" style="width: 6px; height: 6px;"></span>
+              </div>
+              <div class="mt-1 small" [ngClass]="index.change.startsWith('+') ? 'text-success' : 'text-danger'">
+                {{ index.change }} ({{ index.percent }})
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="row">
+      <!-- Commodities -->
+      <div class="col-lg-7 mb-4">
+        <h5 class="mb-3 fw-bold text-uppercase border-start border-4 border-warning ps-3">Commodities</h5>
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">Asset</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                    <th>% Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of globalData.commodities">
+                    <td class="ps-4 fw-bold">{{ item.name }}</td>
+                    <td>{{ item.price }} <small class="text-muted">/{{ item.unit }}</small></td>
+                    <td [ngClass]="item.change.startsWith('+') ? 'text-success' : 'text-danger'">{{ item.change }}</td>
+                    <td [ngClass]="item.percent.startsWith('+') ? 'text-success' : 'text-danger'">{{ item.percent }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Currencies -->
+      <div class="col-lg-5 mb-4">
+        <h5 class="mb-3 fw-bold text-uppercase border-start border-4 border-info ps-3">Forex (vs INR)</h5>
+        <div class="card shadow-sm border-0 bg-dark text-white">
+          <div class="card-body">
+            <div class="list-group list-group-flush bg-transparent">
+              <div class="list-group-item bg-transparent border-secondary-subtle px-0 py-3 d-flex justify-content-between align-items-center"
+                   *ngFor="let fx of globalData.currencies">
+                <div>
+                  <div class="small text-info fw-bold mb-0">CURRENCY PAIR</div>
+                  <h5 class="mb-0 fw-bold">{{ fx.pair }}</h5>
+                </div>
+                <div class="text-end">
+                  <h4 class="mb-0 fw-bold text-primary">₹{{ fx.rate }}</h4>
+                  <div class="small" [ngClass]="fx.change.startsWith('+') ? 'text-success' : 'text-danger'">
+                    {{ fx.change }} ({{ fx.percent }})
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

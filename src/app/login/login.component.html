@@ -1,0 +1,101 @@
+<div class="login-wrapper d-flex align-items-center justify-content-center min-vh-100 bg-light">
+  <div class="card shadow-lg border-0 p-4" style="max-width: 450px; width: 100%; border-radius: 15px;">
+    <div *ngIf="!showRegister">
+      <div class="text-center mb-4">
+        <div class="bg-white d-inline-block rounded-circle p-1 mb-2 shadow-sm" style="width: 64px; height: 64px; overflow: hidden;">
+          <img src="assets/logo.png" alt="Antigravity Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <h2 class="fw-bold text-dark">Welcome</h2>
+      </div>
+
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+            <input type="email" id="email" name="email" class="form-control border-start-0 ps-0" required [(ngModel)]="email" placeholder="name@example.com">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label fw-semibold">Password</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock text-muted"></i></span>
+            <input type="password" id="password" name="password" class="form-control border-start-0 ps-0" required [(ngModel)]="password" placeholder="••••••••">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm mb-3" [disabled]="!loginForm.form.valid">
+          Login to Account
+        </button>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-2 small border-0 fade-in">{{ errorMessage }}</div>
+        
+        <div class="text-center mt-4">
+          <span class="text-muted small">Don't have an account?</span>
+          <a href="javascript:void(0)" (click)="toggleRegister()" class="text-primary small fw-bold text-decoration-none ms-1">Register Now</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Registration UI (Optional, if still used within login component) -->
+    <div *ngIf="showRegister">
+      <div class="text-center mb-4">
+        <div class="bg-primary-subtle d-inline-block rounded-circle p-3 mb-2">
+          <i class="bi bi-person-plus text-primary fs-3"></i>
+        </div>
+        <h2 class="fw-bold text-dark">Create Account</h2>
+        <p class="text-muted small">Join us to start tracking your investments</p>
+      </div>
+
+      <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+        <div class="mb-3">
+          <label for="regEmail" class="form-label fw-semibold">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+            <input type="email" id="regEmail" name="regEmail" class="form-control border-start-0 ps-0" required [(ngModel)]="regEmail" placeholder="name@example.com">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="regPassword" class="form-label fw-semibold">Password</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock text-muted"></i></span>
+            <input type="password" id="regPassword" name="regPassword" class="form-control border-start-0 ps-0" required [(ngModel)]="regPassword" placeholder="••••••••">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="regConfirmPassword" class="form-label fw-semibold">Confirm Password</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
+            <input type="password" id="regConfirmPassword" name="regConfirmPassword" class="form-control border-start-0 ps-0" required [(ngModel)]="regConfirmPassword" placeholder="••••••••">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="regPhoneNumber" class="form-label fw-semibold">Phone Number</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-phone text-muted"></i></span>
+            <input type="text" id="regPhoneNumber" name="regPhoneNumber" class="form-control border-start-0 ps-0" 
+              required [(ngModel)]="regPhoneNumber" placeholder="10-digit mobile number"
+              minlength="10" maxlength="10" pattern="[0-9]*">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="regAccountNumber" class="form-label fw-semibold">Account Number</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-bank text-muted"></i></span>
+            <input type="text" id="regAccountNumber" name="regAccountNumber" class="form-control border-start-0 ps-0" 
+              required [(ngModel)]="regAccountNumber" placeholder="Your bank account number"
+              minlength="12" maxlength="12" pattern="[0-9]*">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm mb-3" [disabled]="!registerForm.form.valid">
+          Register
+        </button>
+        <div *ngIf="regErrorMessage" class="alert alert-danger mt-2 small border-0 fade-in">{{ regErrorMessage }}</div>
+        <div *ngIf="regSuccessMessage" class="alert alert-success mt-2 small border-0 fade-in">{{ regSuccessMessage }}</div>
+
+        <div class="text-center mt-4">
+          <span class="text-muted small">Already have an account?</span>
+          <a href="javascript:void(0)" (click)="toggleRegister()" class="text-primary small fw-bold text-decoration-none ms-1">Login Now</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

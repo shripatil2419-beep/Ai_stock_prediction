@@ -1,0 +1,39 @@
+.global-markets-container {
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.index-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+}
+
+.table {
+  th {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  
+  td {
+    vertical-align: middle;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+
+.list-group-item {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  
+  h5 {
+    letter-spacing: 0.5px;
+  }
+}
